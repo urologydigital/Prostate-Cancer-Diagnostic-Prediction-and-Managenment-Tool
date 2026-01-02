@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 DOrmanov
+Copyright (c) 2025 Dimitar Dormanov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+CLINICAL DISCLAIMER
+
+This software is provided for clinical reference purposes only and is not 
+intended to be used as a medical device. It should not replace professional 
+clinical judgment. All treatment decisions should be made by qualified 
+healthcare professionals in consultation with patients and in accordance 
+with local guidelines and protocols.
