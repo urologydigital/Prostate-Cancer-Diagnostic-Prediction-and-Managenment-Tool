@@ -690,11 +690,12 @@
         <header>
             <h1>🏥 Prostate Cancer Pathway Decision Support</h1>
             <p>Clinical guidance aligned with current national guidelines</p>
+            <div style="margin-top: 8px; font-size: 0.8rem; color: var(--accent-cyan); font-weight: 500;">Version 3.1 | Updated January 2025</div>
             <div class="guidelines-badge">
-                <span>NICE NG131 (2021)</span>
-                <span>GIRFT April 2024</span>
-                <span>EAU 2024/2025</span>
-                <span>AMRC Best Practice</span>
+                <a href="https://www.nice.org.uk/guidance/ng131" target="_blank" style="text-decoration: none;"><span style="cursor: pointer;">NICE NG131 (2021)</span></a>
+                <a href="https://gettingitrightfirsttime.co.uk/surgical_specialties/urology/" target="_blank" style="text-decoration: none;"><span style="cursor: pointer;">GIRFT April 2024</span></a>
+                <a href="https://uroweb.org/guidelines/prostate-cancer" target="_blank" style="text-decoration: none;"><span style="cursor: pointer;">EAU 2024/2025</span></a>
+                <a href="https://www.baus.org.uk/" target="_blank" style="text-decoration: none;"><span style="cursor: pointer;">BAUS Guidelines</span></a>
             </div>
             <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                 <button class="btn btn-secondary" onclick="resetAll()" style="font-size: 0.85rem; padding: 10px 20px; border-color: var(--accent-red);">
@@ -756,8 +757,55 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="psa">PSA Level (ng/ml)</label>
+                    <label for="who-ps">WHO Performance Status</label>
+                    <select id="who-ps">
+                        <option value="">Select...</option>
+                        <option value="0">PS 0 - Fully active</option>
+                        <option value="1">PS 1 - Restricted strenuous activity</option>
+                        <option value="2">PS 2 - Ambulatory, capable of self-care</option>
+                        <option value="3">PS 3 - Limited self-care, >50% in bed</option>
+                        <option value="4">PS 4 - Completely disabled</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="life-expectancy">Estimated Life Expectancy</label>
+                    <select id="life-expectancy">
+                        <option value="">Select...</option>
+                        <option value="less5">&lt; 5 years</option>
+                        <option value="5-10">5-10 years</option>
+                        <option value="10-15">10-15 years</option>
+                        <option value="more15">&gt; 15 years</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fitness">Fitness for Radical Treatment</label>
+                    <select id="fitness">
+                        <option value="">Select fitness status...</option>
+                        <option value="fit">Fit for radical treatment</option>
+                        <option value="unfit">Unfit / significant comorbidities</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="psa">Current PSA (ng/ml)</label>
                     <input type="number" id="psa" placeholder="e.g., 5.2" step="0.1" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="psa-date">PSA Date</label>
+                    <input type="date" id="psa-date">
+                </div>
+
+                <div class="form-group">
+                    <label for="psa-previous">Previous PSA (ng/ml) <span style="font-weight: normal; color: var(--text-muted);">- optional</span></label>
+                    <input type="number" id="psa-previous" placeholder="e.g., 4.1" step="0.1" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="psa-previous-date">Previous PSA Date</label>
+                    <input type="date" id="psa-previous-date">
                 </div>
 
                 <div class="form-group">
@@ -771,12 +819,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="fitness">Fitness for Treatment</label>
-                    <select id="fitness">
-                        <option value="">Select fitness status...</option>
-                        <option value="fit">Fit for radical treatment</option>
-                        <option value="unfit">Unfit / significant comorbidities</option>
-                    </select>
+                    <label for="ipss">IPSS Score <span style="font-weight: normal; color: var(--text-muted);">- if LUTS present</span></label>
+                    <input type="number" id="ipss" placeholder="0-35" min="0" max="35">
+                    <small style="color: var(--text-muted); font-size: 0.75rem;">Mild 0-7 | Moderate 8-19 | Severe 20-35</small>
                 </div>
 
                 <div class="form-group full-width">
@@ -784,15 +829,23 @@
                     <div class="checkbox-group">
                         <label class="checkbox-item">
                             <input type="checkbox" id="family-history">
-                            <span>Family history of prostate cancer</span>
+                            <span>Family history of prostate cancer (1st degree relative)</span>
                         </label>
                         <label class="checkbox-item">
                             <input type="checkbox" id="brca2">
-                            <span>BRCA2 mutation carrier</span>
+                            <span>BRCA1/2 mutation carrier</span>
                         </label>
                         <label class="checkbox-item">
                             <input type="checkbox" id="african-caribbean">
                             <span>African/Caribbean ethnicity</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="ashkenazi">
+                            <span>Ashkenazi Jewish heritage</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="scottish-islands">
+                            <span>Orkney/Shetland heritage (BRCA founder variants)</span>
                         </label>
                     </div>
                 </div>
@@ -801,7 +854,7 @@
                     <label>Symptoms Present</label>
                     <div class="checkbox-group">
                         <label class="checkbox-item">
-                            <input type="checkbox" id="luts">
+                            <input type="checkbox" id="luts" onchange="toggleIPSS()">
                             <span>LUTS (urinary symptoms)</span>
                         </label>
                         <label class="checkbox-item">
@@ -954,6 +1007,15 @@
                 <div>
                     <div class="card-title">Step 3: CPG Calculator</div>
                     <div class="card-subtitle">Cambridge Prognostic Group calculation from biopsy results - NICE NG131 & EAU 2024</div>
+                </div>
+            </div>
+            
+            <div class="info-box" style="margin-bottom: 20px; border-left: 4px solid var(--accent-cyan);">
+                <div class="info-box-title">📊 Additional Prognostic Tools</div>
+                <p style="color: var(--text-secondary); margin-bottom: 12px;">Use alongside CPG for comprehensive risk assessment:</p>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <a href="https://www.predict.nhs.uk/prostate" target="_blank" style="color: var(--accent-cyan); text-decoration: none; font-weight: 500;">📈 Predict Prostate (NICE Endorsed)</a>
+                    <a href="https://cambridgeprognosticgroup.com" target="_blank" style="color: var(--accent-cyan); text-decoration: none; font-weight: 500;">🧮 CPG Calculator</a>
                 </div>
             </div>
             
@@ -1344,11 +1406,17 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="s4-cores-positive">Positive Cores / Total Cores</label>
-                        <input type="text" id="s4-cores-positive" placeholder="e.g., 4/12">
+                        <label for="s4-cores-positive">Number of Positive Cores</label>
+                        <input type="number" id="s4-cores-positive" placeholder="e.g., 4" min="0">
                     </div>
                     <div class="form-group">
-                        <label for="s4-max-core">Max Cancer in Single Core (%)</label>
+                        <label for="s4-cores-total">Total Cores Taken</label>
+                        <input type="number" id="s4-cores-total" placeholder="e.g., 12" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="s4-max-core">Max Cancer in Single Core (%)
+                            <span style="font-weight: normal; color: var(--text-muted); display: block; font-size: 0.75rem;">Highest % of cancer in any single biopsy core</span>
+                        </label>
                         <input type="number" id="s4-max-core" placeholder="e.g., 60" min="0" max="100">
                     </div>
                 </div>
@@ -1668,15 +1736,15 @@
                     <select id="s6-treatment">
                         <option value="">Select treatment...</option>
                         <option value="active-surveillance">Active Surveillance</option>
-                        <option value="watchful-waiting">Watchful Waiting</option>
-                        <option value="radical-prostatectomy">Radical Prostatectomy</option>
+                        <option value="adt-only">ADT Alone</option>
+                        <option value="brachytherapy">Brachytherapy (LDR/HDR)</option>
+                        <option value="cryotherapy">Cryotherapy</option>
                         <option value="ebrt">External Beam Radiotherapy</option>
                         <option value="ebrt-adt">EBRT + ADT</option>
-                        <option value="brachytherapy">Brachytherapy (LDR/HDR)</option>
-                        <option value="sbrt">SBRT (5-Fraction RT)</option>
                         <option value="hifu">HIFU</option>
-                        <option value="cryotherapy">Cryotherapy</option>
-                        <option value="adt-only">ADT Alone</option>
+                        <option value="radical-prostatectomy">Radical Prostatectomy</option>
+                        <option value="sbrt">SBRT (5-Fraction RT)</option>
+                        <option value="watchful-waiting">Watchful Waiting</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1839,29 +1907,60 @@
         <div class="disclaimer">
             <div class="disclaimer-title">
                 <span>⚠️</span>
-                <span>Important Clinical Notice</span>
+                <span>Important Legal & Clinical Notice</span>
             </div>
             <div class="disclaimer-text">
                 <p><strong>FOR CLINICAL REFERENCE ONLY - NOT A MEDICAL DEVICE</strong></p>
+                
                 <p style="margin-top: 12px;">
-                    This tool provides guidance based on NICE NG131 (2019, updated 2021), GIRFT Urology (April 2024), 
-                    EAU-EANM-ESTRO-ESUR-ISUP-SIOG Guidelines (2024/2025), and AMRC Best Practice recommendations.
+                    <strong>Regulatory Status:</strong> This tool is NOT a registered medical device under UK MDR 2002 or EU MDR 2017/745. 
+                    It is provided as an educational and clinical reference aid only. It has not been validated for diagnostic or 
+                    therapeutic decision-making and should not be relied upon as the sole basis for clinical decisions.
                 </p>
+                
                 <p style="margin-top: 12px;">
-                    <strong>Clinical Governance:</strong> This tool is intended to support, not replace, clinical decision-making. 
+                    <strong>Clinical Governance:</strong> This tool is intended to support, not replace, clinical decision-making by qualified healthcare professionals. 
                     All management decisions must be individualised based on patient circumstances, preferences, comorbidities, 
-                    and local resources. All cancer diagnoses must be discussed at the Multidisciplinary Team (MDT) meeting.
+                    and local resources. All cancer diagnoses and treatment plans MUST be discussed at the Multidisciplinary Team (MDT) meeting in accordance with NHS Cancer Standards.
                 </p>
+                
                 <p style="margin-top: 12px;">
-                    <strong>Limitations:</strong> Prognosis estimates are population-based approximations and may not reflect 
-                    individual patient outcomes. Guidelines are subject to change - verify against current published guidance.
+                    <strong>Sources & Evidence Base:</strong> Guidance is derived from the following sources (accessed December 2024 - January 2025):
                 </p>
+                <ul style="margin: 8px 0 8px 20px; font-size: 0.85rem; color: var(--text-secondary);">
+                    <li><a href="https://www.nice.org.uk/guidance/ng131" target="_blank" style="color: var(--accent-cyan);">NICE NG131</a> - Prostate cancer: diagnosis and management (2019, updated 2021)</li>
+                    <li><a href="https://uroweb.org/guidelines/prostate-cancer" target="_blank" style="color: var(--accent-cyan);">EAU-EANM-ESTRO-ESUR-ISUP-SIOG Guidelines</a> - Prostate Cancer (2024/2025)</li>
+                    <li><a href="https://gettingitrightfirsttime.co.uk/surgical_specialties/urology/" target="_blank" style="color: var(--accent-cyan);">GIRFT Urology</a> - Getting It Right First Time (April 2024)</li>
+                    <li><a href="https://www.baus.org.uk/" target="_blank" style="color: var(--accent-cyan);">BAUS</a> - British Association of Urological Surgeons Patient Information</li>
+                    <li><a href="https://prostatecanceruk.org/" target="_blank" style="color: var(--accent-cyan);">Prostate Cancer UK</a> - Patient Information Resources</li>
+                    <li>Cambridge Prognostic Group Classification</li>
+                    <li>AJCC Cancer Staging Manual, 8th Edition (TNM Classification)</li>
+                </ul>
+                
                 <p style="margin-top: 12px;">
-                    <strong>Data Protection:</strong> This tool does not store or transmit any patient data. All calculations 
-                    are performed locally in your browser. No information is saved between sessions.
+                    <strong>Limitations & Liability:</strong> Prognosis estimates are population-based approximations derived from published literature and may not reflect 
+                    individual patient outcomes. Clinical guidelines are subject to change - users should verify against current published guidance. 
+                    The developers accept no liability for clinical decisions made using this tool. Users are responsible for ensuring information is appropriate for their clinical context.
                 </p>
+                
+                <p style="margin-top: 12px;">
+                    <strong>Data Protection & Privacy:</strong> This tool does not store, transmit, or process any patient-identifiable data. All calculations 
+                    are performed locally in your browser using JavaScript. No information is saved between sessions, no cookies are used, and no data is sent to external servers. 
+                    This tool is compliant with UK GDPR principles as no personal data is processed.
+                </p>
+                
+                <p style="margin-top: 12px;">
+                    <strong>Intended Users:</strong> This tool is designed for use by qualified healthcare professionals (doctors, nurses, allied health professionals) 
+                    within the UK NHS or equivalent healthcare settings. It is not intended for patient self-diagnosis or self-management.
+                </p>
+                
+                <p style="margin-top: 12px;">
+                    <strong>Reporting Concerns:</strong> If you identify any errors, outdated information, or have concerns about this tool, please contact the developer. 
+                    Clinical incidents should be reported through your organisation's standard incident reporting procedures.
+                </p>
+                
                 <p style="margin-top: 12px; font-size: 0.8rem; color: var(--text-muted);">
-                    Version 2.0 | Last Updated: December 2025 | Review Date: December 2026
+                    Version 3.1 | Last Updated: January 2025 | Review Date: January 2026 | Developed for NHS Clinical Practice
                 </p>
             </div>
         </div>
@@ -1909,6 +2008,12 @@
 
             currentStep = step;
             
+            // Auto-populate from previous data
+            if (step === 4) prefillStep4();
+            if (step === 5) prefillStep5();
+            if (step === 6) prefillStep6();
+            if (step === 7) prefillStep7();
+            
             // Scroll to top of visible step
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1918,8 +2023,17 @@
             if (patientData.age) {
                 document.getElementById('s4-age').value = patientData.age;
             }
+            if (patientData.whoPS) {
+                document.getElementById('s4-performance').value = patientData.whoPS;
+            }
+            if (patientData.lifeExpectancy) {
+                document.getElementById('s4-life-expectancy').value = patientData.lifeExpectancy;
+            }
             if (patientData.psa) {
                 document.getElementById('s4-psa').value = patientData.psa;
+            }
+            if (patientData.psaVelocity) {
+                document.getElementById('s4-psa-velocity').value = patientData.psaVelocity;
             }
             if (patientData.gleason) {
                 document.getElementById('s4-gleason').value = patientData.gleason;
@@ -1936,6 +2050,45 @@
                 };
                 document.getElementById('s4-t-stage').value = tStageMap[patientData.tStage] || patientData.tStage;
             }
+            if (patientData.dre) {
+                const dreMap = {
+                    'normal': 'normal',
+                    'abnormal': 'nodule',
+                    'not-done': ''
+                };
+                document.getElementById('s4-dre').value = dreMap[patientData.dre] || '';
+            }
+            if (patientData.pirads) {
+                document.getElementById('s4-pirads').value = patientData.pirads;
+            }
+            if (patientData.prostateVolume) {
+                document.getElementById('s4-prostate-volume').value = patientData.prostateVolume;
+            }
+        }
+        
+        // Auto-populate Step 5, 6, 7 from patient data
+        function prefillStep5() {
+            if (patientData.age) {
+                document.getElementById('s5-age').value = patientData.age;
+            }
+            if (patientData.lifeExpectancy) {
+                document.getElementById('s5-life-expectancy').value = patientData.lifeExpectancy;
+            }
+        }
+        
+        function prefillStep6() {
+            if (patientData.age) {
+                document.getElementById('s6-age').value = patientData.age;
+            }
+        }
+        
+        function prefillStep7() {
+            if (patientData.age) {
+                document.getElementById('s7-age').value = patientData.age;
+            }
+            if (patientData.gleason) {
+                document.getElementById('s7-original-gleason').value = patientData.gleason;
+            }
         }
 
         function toggleBiopsyResults() {
@@ -1948,16 +2101,35 @@
                 biopsyResults.classList.add('section-hidden');
             }
         }
+        
+        function toggleIPSS() {
+            // Optional: highlight IPSS field when LUTS is checked
+            const luts = document.getElementById('luts').checked;
+            const ipssField = document.getElementById('ipss');
+            if (luts) {
+                ipssField.style.borderColor = 'var(--accent-cyan)';
+            } else {
+                ipssField.style.borderColor = '';
+            }
+        }
 
         function assessPatient() {
             const age = parseInt(document.getElementById('age').value);
             const psa = parseFloat(document.getElementById('psa').value);
+            const psaDate = document.getElementById('psa-date').value;
+            const psaPrevious = parseFloat(document.getElementById('psa-previous').value);
+            const psaPreviousDate = document.getElementById('psa-previous-date').value;
             const dre = document.getElementById('dre').value;
             const fitness = document.getElementById('fitness').value;
+            const whoPS = document.getElementById('who-ps').value;
+            const lifeExpectancy = document.getElementById('life-expectancy').value;
+            const ipss = parseInt(document.getElementById('ipss').value);
             
             const familyHistory = document.getElementById('family-history').checked;
             const brca2 = document.getElementById('brca2').checked;
             const africanCaribbean = document.getElementById('african-caribbean').checked;
+            const ashkenazi = document.getElementById('ashkenazi').checked;
+            const scottishIslands = document.getElementById('scottish-islands').checked;
             
             const luts = document.getElementById('luts').checked;
             const bonePain = document.getElementById('bone-pain').checked;
@@ -1966,13 +2138,13 @@
 
             // Validation
             if (!age || !psa || !dre || !fitness) {
-                alert('Please complete all required fields');
+                alert('Please complete all required fields: Age, PSA, DRE, and Fitness');
                 return;
             }
 
             patientData = {
-                age, psa, dre, fitness,
-                riskFactors: { familyHistory, brca2, africanCaribbean },
+                age, psa, psaDate, psaPrevious, psaPreviousDate, dre, fitness, whoPS, lifeExpectancy, ipss,
+                riskFactors: { familyHistory, brca2, africanCaribbean, ashkenazi, scottishIslands },
                 symptoms: { luts, bonePain, weightLoss, fatigue },
                 hasMetastaticSymptoms: bonePain || weightLoss || fatigue
             };
@@ -1981,6 +2153,28 @@
             let investigations = [];
             let referralType = '';
             let pathway = '';
+            
+            // Calculate PSA velocity if two readings available
+            if (psa && psaPrevious && psaDate && psaPreviousDate) {
+                const date1 = new Date(psaPreviousDate);
+                const date2 = new Date(psaDate);
+                const monthsDiff = (date2 - date1) / (1000 * 60 * 60 * 24 * 30);
+                if (monthsDiff > 0) {
+                    const psaVelocity = ((psa - psaPrevious) / monthsDiff * 12).toFixed(2);
+                    patientData.psaVelocity = parseFloat(psaVelocity);
+                    html += `
+                        <div class="info-box" style="margin-bottom: 16px;">
+                            <div class="info-box-title">📈 PSA Trend Analysis</div>
+                            <p style="color: var(--text-secondary);">
+                                Previous PSA: ${psaPrevious} ng/ml (${new Date(psaPreviousDate).toLocaleDateString('en-GB')})<br>
+                                Current PSA: ${psa} ng/ml (${new Date(psaDate).toLocaleDateString('en-GB')})<br>
+                                <strong>PSA Velocity: ${psaVelocity} ng/ml/year</strong>
+                                ${parseFloat(psaVelocity) > 0.75 ? ' <span style="color: var(--accent-amber);">⚠️ Elevated velocity</span>' : ''}
+                            </p>
+                        </div>
+                    `;
+                }
+            }
 
             // Determine referral pathway based on guidelines
             
@@ -2178,7 +2372,7 @@
                     <div class="timeline-note">
                         <span class="timeline-icon">⏱️</span>
                         <div class="timeline-text">
-                            <strong>28-Day Faster Diagnosis Standard:</strong> Target 77%+ patients to receive diagnosis/exclusion within 28 days of referral. 
+                            <strong>28-Day Faster Diagnosis Standard:</strong> Target 80% patients to receive diagnosis/exclusion within 28 days of referral. 
                             One-stop clinic (MRI day 7, MDT day 14) or straight-to-test pathway recommended.
                         </div>
                     </div>
@@ -2827,12 +3021,20 @@
         
         function resetStep1() {
             document.getElementById('age').value = '';
-            document.getElementById('psa').value = '';
-            document.getElementById('dre').value = '';
+            document.getElementById('who-ps').value = '';
+            document.getElementById('life-expectancy').value = '';
             document.getElementById('fitness').value = '';
+            document.getElementById('psa').value = '';
+            document.getElementById('psa-date').value = '';
+            document.getElementById('psa-previous').value = '';
+            document.getElementById('psa-previous-date').value = '';
+            document.getElementById('dre').value = '';
+            document.getElementById('ipss').value = '';
             document.getElementById('family-history').checked = false;
             document.getElementById('brca2').checked = false;
             document.getElementById('african-caribbean').checked = false;
+            document.getElementById('ashkenazi').checked = false;
+            document.getElementById('scottish-islands').checked = false;
             document.getElementById('luts').checked = false;
             document.getElementById('bone-pain').checked = false;
             document.getElementById('weight-loss').checked = false;
@@ -2863,7 +3065,7 @@
         
         function resetStep4() {
             const fields = ['s4-age', 's4-performance', 's4-life-expectancy', 's4-comorbidities', 's4-psa', 
-                's4-psa-velocity', 's4-psa-doubling', 's4-gleason', 's4-cores-positive', 's4-max-core',
+                's4-psa-velocity', 's4-psa-doubling', 's4-gleason', 's4-cores-positive', 's4-cores-total', 's4-max-core',
                 's4-dre', 's4-pirads', 's4-prostate-volume', 's4-lesion-size', 's4-epe', 's4-svi', 
                 's4-lymph-mri', 's4-t-stage', 's4-n-stage', 's4-m-stage', 's4-bone-scan', 
                 's4-ct-cap', 's4-psma-pet'];
@@ -4491,7 +4693,8 @@ function getTreatmentData(treatment) {
                 { title: 'BAUS: Active Surveillance for Prostate Cancer', url: 'https://www.baus.org.uk/patients/conditions/8/active_surveillance_for_prostate_cancer' }
             ],
             otherLinks: [
-                { title: 'Prostate Cancer UK: Active Surveillance', url: 'https://prostatecanceruk.org/prostate-information/treatments/active-surveillance' }
+                { title: 'Prostate Cancer UK: Active Surveillance', url: 'https://prostatecanceruk.org/prostate-information/treatments/active-surveillance' },
+                { title: 'STRATCANS: Stratified Cancer Surveillance Protocol', url: 'https://www.cancerresearchuk.org/health-professional/diagnosis/suspected-cancer-referral-best-practice/stratified-follow-up' }
             ]
         },
         'watchful-waiting': {
@@ -4571,7 +4774,10 @@ function getTreatmentData(treatment) {
                 { title: 'BAUS: Robotic Prostatectomy', url: 'https://www.baus.org.uk/patients/conditions/11/robotic_prostatectomy' }
             ],
             otherLinks: [
-                { title: 'Prostate Cancer UK: Surgery', url: 'https://prostatecanceruk.org/prostate-information/treatments/surgery' }
+                { title: 'Prostate Cancer UK: Surgery', url: 'https://prostatecanceruk.org/prostate-information/treatments/surgery' },
+                { title: 'Prostate Cancer UK: Pelvic Floor Exercises', url: 'https://prostatecanceruk.org/prostate-information/living-with-prostate-cancer/pelvic-floor-muscle-exercises' },
+                { title: 'NHS: Urinary Incontinence - Treatment', url: 'https://www.nhs.uk/conditions/urinary-incontinence/treatment/' },
+                { title: 'Bladder & Bowel Community: Male Continence', url: 'https://www.bladderandbowel.org/' }
             ]
         },
         'ebrt': {
@@ -4833,7 +5039,7 @@ function getTreatmentData(treatment) {
                 'Sexual dysfunction: loss of libido, ED (nearly universal)',
                 'Fatigue and reduced energy',
                 'Weight gain, loss of muscle mass',
-                'Osteoporosis (long-term)',
+                'Osteoporosis (long-term) - consider bone protection with Denosumab or Zoledronic acid (Zometa)',
                 'Cardiovascular risk',
                 'Metabolic syndrome, diabetes risk',
                 'Mood changes, depression',
@@ -4850,7 +5056,9 @@ function getTreatmentData(treatment) {
                 { title: 'BAUS: Hormone Therapy', url: 'https://www.baus.org.uk/patients/conditions/16/hormone_therapy' }
             ],
             otherLinks: [
-                { title: 'Prostate Cancer UK: Hormone Therapy', url: 'https://prostatecanceruk.org/prostate-information/treatments/hormone-therapy' }
+                { title: 'Prostate Cancer UK: Hormone Therapy', url: 'https://prostatecanceruk.org/prostate-information/treatments/hormone-therapy' },
+                { title: 'Prostate Cancer UK: Bone Health', url: 'https://prostatecanceruk.org/prostate-information/living-with-prostate-cancer/bone-health' },
+                { title: 'NICE: Bisphosphonates for Bone Protection', url: 'https://www.nice.org.uk/guidance/cg175' }
             ]
         },
         'adt-novel': {
